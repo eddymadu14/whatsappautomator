@@ -2,6 +2,7 @@
 import { createContext, useEffect, useState} from "react";
 import type {ReactNode } from "react";
 
+import * as React from "react";
 import { fetchWhatsAppStatus } from "@/services/status.api";
 
 // Define the shape of your WhatsApp state

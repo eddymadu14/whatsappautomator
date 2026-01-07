@@ -1,12 +1,18 @@
-import React from "react";
+// src/routes/ProtectedRoutes.tsx
+import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
-// For routes that require the user to be logged in
+// -------------------------------
+// Props interface for any protected route
+// -------------------------------
 interface ProtectedRouteProps {
-  children: JSX.Element;
+  children: ReactNode; // use ReactNode instead of JSX.Element
 }
 
+// -------------------------------
+// Route requiring any authenticated user
+// -------------------------------
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { token } = useAuth();
 
@@ -15,12 +21,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return <>{children}</>; // wrap in fragment for type safety
 };
 
-// For routes that require admin access
+// -------------------------------
+// Route requiring admin access
+// -------------------------------
 interface AdminRouteProps {
-  children: JSX.Element;
+  children: ReactNode;
 }
 
 export const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
@@ -30,10 +38,10 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
+  // Replace this with your proper admin role check if available
   if (user?.email !== "admin@example.com") {
-    // Or check a proper admin role field
     return <Navigate to="/" replace />;
   }
 
-  return children;
+  return <>{children}</>; // wrap in fragment for type safety
 };

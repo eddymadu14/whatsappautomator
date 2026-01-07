@@ -1,5 +1,7 @@
-import axios from "axios";
 import type { AxiosInstance } from "axios";
+import axios, { AxiosRequestConfig } from 'axios';
+
+
 
 import { useAuth } from "@/context/AuthContext";
 
@@ -24,10 +26,12 @@ export const useApi = () => {
   api.interceptors.request.use(
     (config) => {
       if (token) {
-        config.headers = {
-          ...config.headers,
-          Authorization: `Bearer ${token}`,
-        };
+     const config: AxiosRequestConfig = {
+  headers: new axios.AxiosHeaders({
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/json'
+  })
+};
       }
       return config;
     },

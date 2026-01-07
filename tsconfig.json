@@ -1,16 +1,24 @@
 {
   "compilerOptions": {
+    "target": "ESNext",                     // modern JS output
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // browser + JS libs
+    "allowJs": true,                        // allow JS files (type checking only)
+    "checkJs": false,                       // don’t check JS files
+    "jsx": "react-jsx",                      // React 17+ JSX transform
+    "strict": true,                          // strict type checking
+    "module": "ESNext",                       // module system for Vite
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,                 // required by Vite
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,                    // ignore node_modules type errors
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"]
     },
-    "jsx": "react-jsx",
-    "strict": true,
-    "moduleResolution": "node",
-      "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "noEmit": true                           // prevent TS from writing JS files (Vite handles it)
   },
-
   "include": ["src"]
 }
