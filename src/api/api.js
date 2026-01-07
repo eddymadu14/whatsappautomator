@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
 // Create a reusable Axios instance
 const api = axios.create({
-    baseURL: "http://localhost:5000/api/", // your backend base URL
+    baseURL: "https://whatsapp-automator.onrender.com/api/", // your backend base URL
     headers: {
         "Content-Type": "application/json",
     },
