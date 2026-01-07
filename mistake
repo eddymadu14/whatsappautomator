@@ -1,0 +1,166 @@
+Perfect — great to hear the colors and basic structure are working! That means Step 1 is solid. Now we can focus on Step 2: Layout Structure, which is about making all pages consistent, responsive, and properly wrapped, just like in your Next.js app.
+
+
+---
+
+Step 2: Layout Structure for React + Vite
+
+In your Next.js app, the structure likely comes from:
+
+app/layout.tsx → wraps pages in header, sidebar, main content area, footer
+
+components/sidebar.tsx → the left-hand navigation
+
+components/ui/* → reusable containers, cards, tables, buttons
+
+
+We’ll replicate that in Vite.
+
+
+---
+
+A. Create a Layout Component
+
+File: src/components/Layout.tsx
+
+import { ReactNode } from "react";
+import Sidebar from "./Sidebar";
+
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
+  return (
+    <div className="flex min-h-screen bg-background text-darkText">
+      {/* Sidebar */}
+      <Sidebar className="w-64 min-h-screen bg-[#1a1a1a] shadow-lg" />
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="p-4 bg-[#1a1a1a] shadow-md text-primary font-bold">
+          WAutomator
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 p-6 overflow-auto">{children}</main>
+
+        {/* Footer */}
+        <footer className="p-4 bg-[#1a1a1a] text-sm text-gray-400 text-center">
+          © 2025 WAutomator
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+Explanation:
+
+Top-level div uses flex row → sidebar + main content.
+
+Sidebar is fixed width (w-64) and full height.
+
+Main content uses flex-col for header → main → footer.
+
+main scrolls independently (overflow-auto).
+
+Colors come from your Tailwind/global theme.
+
+
+
+---
+
+B. Create Sidebar Component
+
+File: src/components/Sidebar.tsx
+
+import { NavLink } from "react-router-dom"; // or simple <a> links
+
+export default function Sidebar({ className = "" }: { className?: string }) {
+  const links = [
+    { name: "Connect", to: "/connect" },
+    { name: "Leads", to: "/leads" },
+    { name: "Broadcast", to: "/broadcast" },
+    { name: "Templates", to: "/templates" },
+    { name: "Settings", to: "/settings" },
+  ];
+
+  return (
+    <nav className={`flex flex-col p-4 space-y-4 ${className}`}>
+      {links.map((link) => (
+        <NavLink
+          key={link.to}
+          to={link.to}
+          className={({ isActive }) =>
+            `block px-4 py-2 rounded hover:bg-primary hover:text-darkText ${
+              isActive ? "bg-primary text-darkText" : ""
+            }`
+          }
+        >
+          {link.name}
+        </NavLink>
+      ))}
+    </nav>
+  );
+}
+
+Notes:
+
+Uses Tailwind spacing (p-4, space-y-4) and hover effects.
+
+Highlights the active page.
+
+Works with React Router — if you don’t use it, replace NavLink with <a href="#">.
+
+
+
+---
+
+C. Wrap Pages in Layout
+
+For example, your Connect.tsx:
+
+import Layout from "../components/Layout";
+import QRCodeComponent from "../components/QRCodeComponent";
+
+export default function Connect() {
+  return (
+    <Layout>
+      <div className="flex flex-col items-center justify-center h-full">
+        <h1 className="text-3xl font-bold mb-6 text-primary">Connect WhatsApp</h1>
+        <QRCodeComponent className="mb-4" />
+        <button className="bg-primary text-darkText px-6 py-2 rounded hover:bg-secondary transition">
+          Connect
+        </button>
+      </div>
+    </Layout>
+  );
+}
+
+All pages will now have consistent sidebar, header, footer, and padding.
+
+Layout is responsive if you add Tailwind responsive classes later (md:w-64, sm:hidden, etc.).
+
+
+
+---
+
+Next Steps After Layout
+
+1. Wrap all pages (Leads, Broadcast, Templates, Settings) in this Layout.
+
+
+2. Update Sidebar links to match your Vite routes.
+
+
+3. Start styling UI components (buttons, tables, cards) using Tailwind from components/ui/*.
+
+
+
+
+---
+
+If you want, I can rewrite a full ready-to-use Layout + Sidebar + a sample page (Connect) with proper Tailwind spacing, colors, and responsiveness, so you can just copy it into Vite and it will look like your Next.js version immediately.
+
+Do you want me to do that next?
