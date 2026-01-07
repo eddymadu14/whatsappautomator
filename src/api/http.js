@@ -1,7 +1,17 @@
-const BASE_URL = "https://whatsapp-automator.onrender.com/api";
+// src/lib/http.ts
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+if (!API_BASE_URL) {
+    throw new Error("VITE_API_BASE_URL is not defined in .env");
+}
+/**
+ * Generic HTTP helper using Fetch API
+ * @param path - endpoint path (e.g., "/leads")
+ * @param options - fetch options
+ * @returns parsed JSON response of type T
+ */
 export async function http(path, options = {}) {
     const token = localStorage.getItem("token"); // MUST exist after login
-    const res = await fetch(`${BASE_URL}${path}`, {
+    const res = await fetch(`${API_BASE_URL}/api${path}`, {
         ...options,
         headers: {
             "Content-Type": "application/json",

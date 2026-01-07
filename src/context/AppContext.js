@@ -1,5 +1,6 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { createContext, useEffect, useState } from "react";
+import * as React from "react";
 import { fetchWhatsAppStatus } from "@/services/status.api";
 export const AppContext = createContext(undefined);
 export const AppProvider = ({ children }) => {
