@@ -16,15 +16,17 @@ import { toast } from "sonner";
 import { QrCode, Shield, Bell, Clock, RefreshCcw, LogOut } from "lucide-react";
 
 import { http } from "@/api/http";
+import type { Settings as SettingsType} from "@/types/settings";
 
-interface SettingsType {
-  auto_reply_enabled?: string;
-  serious_keywords?: string;
-  business_hours_enabled?: string;
-  business_hours_start?: string;
-  business_hours_end?: string;
-  [key: string]: any;
-}
+
+// interface SettingsType {
+//   auto_reply_enabled?: string;
+//   serious_keywords?: string;
+//   business_hours_enabled?: string;
+//   business_hours_start?: string;
+//   business_hours_end?: string;
+//   [key: string]: any;
+// }
 
 interface WhatsAppStatus {
   status: "qr" | "connected" | "disconnected";
@@ -35,8 +37,7 @@ interface WhatsAppStatus {
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const pollRef = useRef<NodeJS.Timer | null>(null);
-  const initialToastRef = useRef(true);
+const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);  const initialToastRef = useRef(true);
 
   const [settings, setSettings] = useState<SettingsType>({});
   const [waStatus, setWaStatus] = useState<WhatsAppStatus | null>(null);

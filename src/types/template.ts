@@ -1,8 +1,19 @@
+// src/types/template.ts
 
 export interface Template {
-  id: number;
+  /** MongoDB ID */
+  _id: string;
+
+  /** Display name */
   name: string;
+
+  /** Auto-reply message body */
   content: string;
-  keywords: string;
-  is_active: number;
+
+  /** Trigger keywords */
+  keywords?: string[];
+
+  /** Timestamps (from backend) */
+  createdAt?: string;
+  updatedAt?: string;
 }

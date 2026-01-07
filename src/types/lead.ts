@@ -1,10 +1,34 @@
+// src/types/lead.ts
+
+export type LeadStatus =
+  | "pending"
+  | "contacted"
+  | "converted"
+  | "cold";
 
 export interface Lead {
-  id: number;
+  /** MongoDB ID */
+  _id: string;
+
+  /** Basic identity */
+  name?: string;
   phone: string;
-  name: string;
-  message: string;
-  status: "pending" | "contacted" | "converted" | "cold";
-  is_serious: number;
-  created_at: string;
+
+  /** Message content */
+  message?: string;
+
+  /** Auto-reply / keyword intelligence */
+  triggerKeyword?: string;
+  matchedSynonym?: string;
+  keywordHitCount?: number;
+
+  /** Lead qualification */
+  isSerious?: boolean;
+
+  /** Lifecycle */
+  status: LeadStatus;
+
+  /** Timestamps */
+  createdAt: string;            // ISO string from backend
+  lastInteractionAt?: string;   // ISO string (optional)
 }
