@@ -18,7 +18,7 @@
     "paths": {
       "@/*": ["*"]
     },
-    "noEmit": false                           // prevent TS from writing JS files (Vite handles it)
+    "noEmit": true                           // prevent TS from writing JS files (Vite handles it)
   },
   "include": ["src", "vite-env.d.ts"]
 }
