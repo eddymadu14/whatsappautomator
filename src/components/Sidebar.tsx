@@ -1,4 +1,3 @@
-// Sidebar.tsx
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -17,7 +16,7 @@ import {
 import { cn } from "../api/utils";
 import { useLogout } from "@/hooks/mutations/useLogout";
 import { useAuth } from "@/context/AuthContext";
-import { useWA } from "@/context/waContext"; // updated hook
+import { useWA } from "@/context/waContext";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
@@ -32,79 +31,88 @@ export function Sidebar() {
   const navigate = useNavigate();
   const logoutMutation = useLogout();
   const { isAuthenticated } = useAuth();
-  const { waStatus, pollRef, terminateInit } = useWA(); // useWA hook
+  const { waStatus, pollRef, terminateInit } = useWA();
 
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  // 🔥 single toggle state
+  const [open, setOpen] = useState(true);
 
-  // ✅ Combined Logout + QR Killer
+  const toggleSidebar = () => setOpen(v => !v);
+
   const handleLogout = async () => {
-    try {
-      // Stop polling if active
-      if (pollRef.current) {
-        clearInterval(pollRef.current);
-        pollRef.current = null;
-      }
-
-      // Kill WhatsApp QR/init session if not connected
-      if (waStatus && !waStatus.connected) {
-        await terminateInit();
-      }
-
-      // Logout mutation
-      logoutMutation.mutate(undefined, {
-        onSuccess: () => {
-          localStorage.removeItem("token");
-          navigate("/login", { replace: true });
-        },
-      });
-    } catch (err) {
-      console.error("Logout failed:", err);
-      alert("Logout failed");
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
     }
+
+    if (waStatus && !waStatus.connected) {
+      await terminateInit();
+    }
+
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        localStorage.removeItem("token");
+        navigate("/login", { replace: true });
+      },
+    });
   };
 
   return (
     <>
-      {/* Mobile toggle */}
+      {/* ================= HAMBURGER (FIXED, ALWAYS CLICKABLE) ================= */}
       <button
-        onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-card p-2 rounded-lg shadow"
+        onClick={toggleSidebar}
+        className="
+          fixed top-4 left-4 z-[60]
+          bg-primary text-primary-foreground
+          p-2 rounded-lg shadow
+        "
       >
-        <Menu />
+        <Menu className="w-5 h-5" />
       </button>
 
+      {/* ================= SIDEBAR ================= */}
       <aside
         className={cn(
-          "fixed md:static z-40 h-screen border-r bg-card shadow-sm transition-all",
-          collapsed ? "w-20" : "w-64",
-          mobileOpen ? "left-0" : "-left-full",
-          "md:left-0"
+          "fixed md:static z-40 h-screen bg-card border-r shadow-sm transition-all duration-300 ease-in-out overflow-hidden",
+          open ? "w-64" : "w-0 md:w-20"
         )}
       >
-        {/* Header */}
-        <div className="p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary p-2 rounded-xl">
-              <Bot className="w-5 h-5 text-primary-foreground" />
-            </div>
-            {!collapsed && <h1 className="font-bold">WA Automator</h1>}
-          </div>
+        {/* ================= ARROW TOGGLE ================= */}
+        <button
+          onClick={toggleSidebar}
+          className="
+            absolute -right-3 top-6 z-50
+            w-7 h-7 rounded-full
+            flex items-center justify-center
+            bg-primary text-primary-foreground
+            shadow-md
+          "
+        >
+          <ChevronLeft
+            className={cn(
+              "w-4 h-4 transition-transform duration-300",
+              !open && "rotate-180"
+            )}
+          />
+        </button>
 
-          <button onClick={() => setCollapsed(!collapsed)} className="hidden md:block">
-            <ChevronLeft className={cn("transition-transform", collapsed && "rotate-180")} />
-          </button>
+        {/* ================= HEADER ================= */}
+        <div className="p-4 flex items-center gap-3">
+          <div className="bg-primary p-2 rounded-xl">
+            <Bot className="w-5 h-5 text-primary-foreground" />
+          </div>
+          {open && <h1 className="font-bold">WA Automator</h1>}
         </div>
 
-        {/* Navigation */}
+        {/* ================= NAV ================= */}
         <nav className="px-3 space-y-1">
-          {navItems.map((item) => (
+          {navItems.map(item => (
             <NavLink
               key={item.href}
               to={item.href}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium",
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap",
                   isActive
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:bg-muted"
@@ -112,22 +120,27 @@ export function Sidebar() {
               }
             >
               <item.icon className="w-4 h-4" />
-              {!collapsed && item.label}
+              {open && item.label}
             </NavLink>
           ))}
 
-          {/* Logout */}
           <button
             onClick={handleLogout}
             disabled={logoutMutation.isPending}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10"
+            className="
+              w-full flex items-center gap-3
+              px-3 py-2.5 rounded-lg
+              text-sm font-medium
+              text-destructive hover:bg-destructive/10
+              whitespace-nowrap
+            "
           >
             <LogOut className="w-4 h-4" />
-            {!collapsed && "Logout"}
+            {open && "Logout"}
           </button>
         </nav>
 
-        {/* Session Status */}
+        {/* ================= SESSION STATUS ================= */}
         <div className="absolute bottom-4 left-0 right-0 px-4">
           <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-lg">
             <Circle
@@ -138,7 +151,7 @@ export function Sidebar() {
                   : "fill-red-500 text-red-500"
               )}
             />
-            {!collapsed && (
+            {open && (
               <span className="text-xs">
                 {isAuthenticated ? "Session Active" : "Session Expired"}
               </span>
